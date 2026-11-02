@@ -8,7 +8,9 @@ from typing import List, Optional, Tuple
 from .text import Line
 
 # Optional leading section number: "5 ", "5. ", "5: ", "5.2 " ...
-HEAD_PREFIX = r"^\s*(?:(\d{1,2}(?:\.\d{1,2})*)\s*(?:[.)\]:]\s*|\s+))?"
+# A page number is frequently glued in front of the heading: "452 6. Conclusion".
+PAGE_LEAD = r"^(?:\d{1,4}\s+)?"
+HEAD_PREFIX = PAGE_LEAD + r"\s*(?:(\d{1,2}(?:\.\d{1,2})*)\s*(?:[.)\]:]\s*|\s+))?"
 
 # Up to two leading words are tolerated so that "Implications and Concluding Remarks"
 # and "Discussion and Conclusions" still resolve to the conclusion keyword.
@@ -43,13 +45,16 @@ BACKMATTER_RE = re.compile(
     (?:
        (?:list\s+of\s+)?references?|reference\s+list|bibliography|works\s+cited|literature\s+cited
      | acknowledg(?:e)?ments?(?:\s+(?:and|of)\s+(?:funding|financial\s+support|support|funds?))?
-     | funding(?:\s+(?:information|sources?|acknowledg\w*))?
+     | funding(?:\s+(?:information|sources?|statement|details|acknowledg\w*))?
      | (?:role|roles)\s+of\s+(?:the\s+)?funding\s+source
      | financial\s+support
      | declaration(?:s)?(?:\s+of\s+(?:competing\s+|conflicting\s+)?interests?)?
      | declaration\s+of\s+generative\s+ai
      | competing\s+interests?|conflicts?\s+of\s+interest
-     | authors?\s+contributions?|CRediT(?:\s+author\s+statement)?
+     | authors?['’]?\s*(?:contributions?|contribution\s+statement|statements?)
+     | (?:authorship|author)\s+(?:contribution\s+)?statement
+     | CRediT\b.{0,60}
+     | (?:authorship\s+)?contribution\s+statement
      | data\s+availability(?:\s+statement)?|availability\s+of\s+data(?:\s+and\s+materials?)?
      | (?:supporting|supplementary)\s+(?:information|material|data)
      | (?:online\s+|supplementary\s+)?appendi(?:x|ces)\b.{0,120}
@@ -122,7 +127,7 @@ def is_title_case(s: str) -> bool:
 def concl_head_ok(s: str) -> bool:
     """Morphological gate for a conclusion heading (ported from a validated heuristic)."""
     s = s.strip()
-    m = re.match(r"^\s*\d{1,2}(?:\.\d{1,2})*\s*(?:[.)\]:]\s*|\s+)", s)
+    m = re.match(r"^\s*(?:\d{1,4}\s+)?(?:\d{1,2}(?:\.\d{1,2})*\s*(?:[.)\]:]\s*|\s+))?", s)
     core = s[m.end():] if m else s
     if not core or not core[0].isupper():
         return False

@@ -135,6 +135,7 @@ Full specification: [docs/SPEC.md](docs/SPEC.md).
 | `REF_ENTRIES` | reference entries inside the body | 25 |
 | `URL_IN_BODY` | non-repository link inside the body | 20 |
 | `SYMBOL_DENSE` | transcript notation or data dump | 20 |
+| `SPAN_TOO_LARGE` | over 1500 words: the boundary missed | 50 |
 | `TABLE_LEAK` | table rows inside the body | 20 |
 | `TIGHT_SPAN` | thin span, boundary on the heading's page | 15 |
 | `ALT_HEAD` | no Conclusion heading; Discussion-type section used | 8 |

@@ -45,3 +45,16 @@ def test_empty_body_scores_zero():
     s = assess("", 0, 0, 0, 0, False, 0)
     assert s.confidence == 0
     assert s.needs_review
+
+
+def test_absurdly_long_span_is_flagged():
+    body = "word " * 2000
+    s = assess(body, 2000, 120, 3, 12, False, 1)
+    assert "SPAN_TOO_LARGE" in s.flags
+    assert s.needs_review
+
+
+def test_normal_long_conclusion_is_not_flagged_for_size():
+    body = " ".join(["word"] * 800) + "."
+    s = assess(body, 800, 30, 3, 8, False, 1)
+    assert "SPAN_TOO_LARGE" not in s.flags

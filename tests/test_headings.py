@@ -60,3 +60,28 @@ def test_backmatter_accepts_short_heading_with_period():
 def test_backmatter_matches_spaced_note_headings(s):
     from wcengine.headings import BACKMATTER_RE
     assert BACKMATTER_RE.match(s) is not None
+
+
+@pytest.mark.parametrize("s", [
+    "CRediT authorship contribution statement",
+    "CRediT author statement",
+    "Funding statement",
+    "Authors statement",
+    "Author statement",
+    "Authorship statement",
+    "Author contributions",
+    "Notes.",
+])
+def test_backmatter_matches_elsevier_front_back_matter(s):
+    from wcengine.headings import BACKMATTER_RE, backmatter_ok
+    assert BACKMATTER_RE.match(s) is not None
+    assert backmatter_ok(s)
+
+
+@pytest.mark.parametrize("s", [
+    "452 6. Conclusion and Pedagogical Implications",
+    "525 Conclusion",
+    "361 5. Discussion",
+])
+def test_heading_with_page_number_glued_in_front(s):
+    assert concl_head_ok(s)

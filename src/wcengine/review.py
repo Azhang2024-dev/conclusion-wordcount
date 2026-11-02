@@ -34,6 +34,7 @@ PENALTIES = {
     "REF_ENTRIES": 25,
     "TABLE_LEAK": 20,
     "SYMBOL_DENSE": 20,
+    "SPAN_TOO_LARGE": 50,     # a conclusion this long means the boundary failed
     "ALT_HEAD": 8,             # conclusion inferred from a Discussion-type heading
     "MULTI_HEAD": 5,
     "EMPTY": 100,
@@ -64,6 +65,9 @@ def assess(body: str, words: int, kept_lines: int,
            head_page: int, boundary_page: int, alt: bool,
            n_heads: int) -> Signals:
     sig = Signals()
+    if words > 1500:
+        # No journal publishes a 2000-word conclusion. The boundary missed.
+        sig.add("SPAN_TOO_LARGE", "%d words; the stopping point was not found" % words)
     if words <= 0:
         sig.add("EMPTY", "no prose survived filtering")
         sig.confidence = 0
