@@ -42,8 +42,6 @@ FURNITURE: Sequence[re.Pattern] = [
     # Elsevier / Emerald page foot: "128 N. Harwood / English for Specific Purposes 68 (2022) 116-130"
     re.compile(r"^\d{1,4}\s+[A-Z]\.\s*[A-Za-z'\-]+.*/\s*[A-Z][A-Za-z &:.]+\s+\d+\s*\(\d{4}\)"),
     re.compile(r"(?i)^[A-Z][A-Za-z'\-]+\s+et\s+al\.?\s*/\s*.+\d{4}"),
-    # Transcript notation blocks and data dumps
-    re.compile(r"(?i)^transcript\s+key\b"),
 ]
 
 # Journal-name + page-number running heads ("36 TESOL QUARTERLY").

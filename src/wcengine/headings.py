@@ -197,6 +197,10 @@ def find_boundary(lines: List[Line], hi: int, concl_num: str) -> Tuple[Optional[
     """Index of the first line after the conclusion that starts the next unit."""
     for j in range(hi + 1, len(lines)):
         s = lines[j][1]
+        # A transcript key is often one very long line, so it is matched on its
+        # opening words rather than on a heading-length pattern.
+        if re.match(r"(?i)^\s*transcript\s+key\b", s):
+            return j, "transcript-key"
         if BACKMATTER_RE.match(s) and backmatter_ok(s, 10, 110):
             return j, "backmatter"
         if NEXT_SECTION_RE.match(s) and simple_head_ok(s, 10, 90):
