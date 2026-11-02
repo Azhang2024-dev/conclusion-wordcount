@@ -53,7 +53,7 @@ BACKMATTER_RE = re.compile(
      | data\s+availability(?:\s+statement)?|availability\s+of\s+data(?:\s+and\s+materials?)?
      | (?:supporting|supplementary)\s+(?:information|material|data)
      | (?:online\s+|supplementary\s+)?appendi(?:x|ces)\b.{0,120}
-     | notes?|endnotes?|footnotes?
+     | notes?|end\s*notes?|foot\s*notes?|notes?\s+and\s+references
      | about\s+the\s+authors?|notes?\s+on\s+contributors?|author\s+biograph(?:y|ies)
      | disclosure\s+statement|ethical\s+(?:approval|considerations)
      | ORCID

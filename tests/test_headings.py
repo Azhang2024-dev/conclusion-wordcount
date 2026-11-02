@@ -53,3 +53,10 @@ def test_simple_head_ok_rejects_sentence_tails():
 def test_backmatter_accepts_short_heading_with_period():
     assert backmatter_ok("Appendix A.")
     assert not backmatter_ok("Appendix D have provided rich qualitative data")
+
+
+@pytest.mark.parametrize("s", ["END NOTES", "End Notes", "ENDNOTES", "Endnote", "Foot notes",
+                               "NOTES AND REFERENCES"])
+def test_backmatter_matches_spaced_note_headings(s):
+    from wcengine.headings import BACKMATTER_RE
+    assert BACKMATTER_RE.match(s) is not None
