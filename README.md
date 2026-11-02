@@ -104,15 +104,27 @@ contamination.
 
 ## Validation
 
-On a 55-paper sample from *Applied Linguistics*, *Cognitive Linguistics* and *TESOL
-Quarterly*, manual review of each boundary agreed with every engine verdict. The two
-papers whose counts were inflated by footnote and transcript-key bleed (`amac031`: 569 →
-458, `amae029`: 564 → 493) were exactly the two lowest-confidence rows among the passing
-set — the scoring surfaced what the human found, in the same order.
+**Per-paper review, 24 papers from *Applied Linguistics* (2020-2025).** Every boundary
+was opened and read. Each engine verdict was confirmed: 11 within 250-600 words, 7 too
+short, 5 too long, 1 with no conclusion section at all. Two counts were inflated by
+material glued onto the end of the conclusion:
 
-Cross-checking against an independent extractor (PyMuPDF) on the same page spans gives a
-median absolute difference of about 5%; the engine reads lower because headings, table
-bodies and glossary lists are excluded by design.
+| paper | engine | after trimming | bleed |
+| --- | --- | --- | --- |
+| `amac031` | 569 | 458 | endnote block + corpus URLs |
+| `amae029` | 564 | 493 | transcript key table |
+
+Both still passed the length gate, so the verdict held. But the two lowest-confidence
+rows among the passing set were exactly those two papers: the scoring surfaced what the
+human reviewer found, in the same order.
+
+**Independent extractor cross-check, 40 papers across journals.** Re-extracting the same
+page spans with PyMuPDF gives a median absolute difference of 4.7% against the engine,
+with 23 of 40 within 5%. The engine reads lower because headings, table bodies and
+glossary lists are excluded by design.
+
+**Tokeniser sensitivity.** Switching from the canonical count to the strict
+letters-only variant moves counts by under 1% and changed no verdict in the sample.
 
 ## Limits
 
