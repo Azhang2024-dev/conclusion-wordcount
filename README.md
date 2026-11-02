@@ -47,6 +47,9 @@ wcengine review report.csv --limit 20
 
 # compare the canonical count with a strict letters-only tokeniser
 wcengine check ./pdfs
+
+# dedupe batch reports and report the corpus gap
+wcengine inventory a.csv b.csv --manifest manifest.csv --target 500
 ```
 
 ```python
@@ -58,6 +61,45 @@ print(r.head, r.boundary, r.flags)
 if r.needs_review:
     print("manual check:", r.reasons)
 ```
+
+## Inventory: how much corpus do I actually have?
+
+`batch` answers "how long is this conclusion". `inventory` answers the next
+question: with those counts in hand, how many usable papers does the corpus
+contain, and what is still missing.
+
+```bash
+wcengine batch ./corpus -o corpus.csv
+wcengine batch ./downloads -o downloads.csv
+
+wcengine inventory corpus.csv downloads.csv   --manifest corpus/_manifest.csv   --target 500 --per-journal 50   -o inventory.csv --md inventory.md
+```
+
+It reports:
+
+- committed papers that are still usable, and new files that are usable
+- duplicates skipped, matched by SHA256 **and** by a normalised title key
+  (the same article saved twice under different file names is common)
+- per-journal totals against a quota, plus the surplus and the deficit
+- the observed yield per journal (usable / screened) and, from that, how many
+  more files a short journal is likely to need
+- usable rows that scored below 90 confidence, which should be opened first
+
+A surplus in one journal does not transfer to another, so the accounting shows
+two different numbers: the shortfall against the total target and the shortfall
+against the per-journal quotas. They are rarely equal, and the second is the one
+that constrains the design.
+
+Journals are read from the first path segment under the scanned root, so a tree
+laid out as `<root>/<journal>/<year>/<file>.pdf` needs no extra configuration.
+Use `--journal-depth` for other layouts.
+
+| flag | meaning |
+| --- | --- |
+| `--manifest` | CSV of files already committed; matched on absolute path |
+| `--manifest-status` | status value that counts as committed (default `active`) |
+| `--target` | total papers wanted (default 500) |
+| `--per-journal` | papers wanted per journal (default 50) |
 
 ## Counting rules
 

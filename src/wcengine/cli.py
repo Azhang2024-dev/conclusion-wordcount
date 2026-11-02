@@ -121,6 +121,32 @@ def cmd_check(args) -> int:
     return 0
 
 
+def cmd_inventory(args) -> int:
+    from .inventory import build, load_manifest, load_report, render_text, write_csv, write_markdown
+
+    entries = []
+    for i, report in enumerate(args.reports):
+        entries.extend(load_report(report, batch=report, journal_depth=args.journal_depth,
+                                   root=args.root))
+
+    manifest = None
+    if args.manifest:
+        manifest = load_manifest(args.manifest, args.manifest_status,
+                                 args.status_col, args.path_col, args.journal_col)
+
+    inv = build(entries, manifest=manifest, target=args.target,
+                per_journal=args.per_journal, low=args.low, high=args.high)
+    print(render_text(inv))
+
+    if args.out:
+        write_csv(inv, args.out)
+        print("inventory CSV ->", args.out)
+    if args.md:
+        write_markdown(inv, args.md)
+        print("markdown      ->", args.md)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="wcengine", description=(
         "Extract a paper's conclusion section and count its words."))
@@ -153,6 +179,24 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("path")
     common(c)
     c.set_defaults(func=cmd_check)
+
+    v = sub.add_parser("inventory", help="dedupe batch reports and report the corpus gap")
+    v.add_argument("reports", nargs="+", help="CSV files written by `batch`")
+    v.add_argument("--root", default="", help="root the relpaths are relative to")
+    v.add_argument("--manifest", default="", help="CSV marking files already committed")
+    v.add_argument("--manifest-status", default="active",
+                   help="status value that counts as committed (default: active)")
+    v.add_argument("--status-col", default="status")
+    v.add_argument("--path-col", default="pdf_path")
+    v.add_argument("--journal-col", default="journal")
+    v.add_argument("--journal-depth", type=int, default=0,
+                   help="0-based path segment holding the journal name (default 0)")
+    v.add_argument("--target", type=int, default=500, help="total papers wanted")
+    v.add_argument("--per-journal", type=int, default=50, help="papers wanted per journal")
+    v.add_argument("-o", "--out", default="", help="write the per-file inventory CSV here")
+    v.add_argument("--md", default="", help="write a markdown summary here")
+    common(v)
+    v.set_defaults(func=cmd_inventory)
     return p
 
 

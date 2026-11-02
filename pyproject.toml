@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "conclusion-wordcount"
-version = "1.0.0"
+version = "1.1.0"
 description = "Extract a paper's conclusion section and count its words, with a confidence score and review queue."
 readme = "README.md"
 requires-python = ">=3.9"
