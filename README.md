@@ -137,3 +137,15 @@ No PDFs are required; fixtures are synthetic.
 ## Licence
 
 MIT.
+
+## Maintenance
+
+`scripts/publish.py` pushes this working tree to GitHub. It reads the token from the
+Windows user environment variable `Github_personal_access_token_1` and passes it to git
+as a one-shot `http.extraheader`, so the credential never appears in the remote URL,
+in `git config`, in process arguments, or in any file. Remove or lock this script down
+before publishing a fork.
+
+```bash
+python scripts/publish.py
+```
